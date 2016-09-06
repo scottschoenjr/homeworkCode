@@ -1,3 +1,5 @@
+# Code for Homework 2, ME-6441
+
 import numpy as np
 
 # Useful constants
@@ -24,7 +26,7 @@ def RotZ(theta):
     return R
 #
 
-# Problem 1
+# Problem 1 -----------------------------------------------------------------
 r = np.matrix([[30E-3], [80E-3], [50E-3]])
 Ry = RotY(65*deg2rad);
 Rx = RotX(-135*deg2rad);
@@ -32,13 +34,17 @@ R = np.dot(Rx, Ry); # Total rotation matrix
 
 # Part a
 r1 = np.dot(R, r);
-print(r1)
+print("Problem 1(a): r = " )
+print( r1 )
+print("")
 
 # Part b
 r2 = np.dot(R.T, r);
+print("Problem 1(b): r = " )
 print(r2)
+print("")
 
-# Problem 2
+# Problem 2 -------------------------------------------------------------------
 d = 120E-3;
 
 L0 = 250E-3;
@@ -68,4 +74,33 @@ r = np.matrix([[L1],[0],[d]])
 x1 = np.dot(Rtot, r)
 
 # Print results
+print("Problem 2: Delta r = " )
 print( x1 - x0 )
+print("" )
+
+# Problem 4 -------------------------------------------------------------------
+
+# Angles and distances of interest
+theta = 120*deg2rad;
+phi = -70*deg2rad;
+AB = 400E-3;
+BC = 400E-3;
+CD = 200E-3;
+
+# Define rotation matrices
+R0i = RotX(theta);
+R1i = np.dot( RotZ(50*deg2rad), R0i );
+R2i = np.dot( RotX(phi), R1i );
+
+# De
+v0 = np.matrix([[AB], [0], [ 0]]);
+v1 = np.matrix([[BC], [0], [ 0]]);
+v2 = np.matrix([[ 0], [0], [CD]]);
+
+R = np.dot( R0i.T, v0 ) + np.dot( R1i.T, v1 ) + np.dot( R2i.T, v2 );
+
+# Print results
+print("Problem 4: R = " )
+print( R )
+print("" )
+
