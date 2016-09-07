@@ -3,27 +3,27 @@
 import numpy as np
 
 # Useful constants
-deg2rad = np.pi*180;
+deg2rad = np.pi/180;
 rad2deg = 1/deg2rad;
 
 # Define rotation matrices
-def RotX(theta)
+def RotX(theta):
     R = np.matrix([[1,              0,            0 ], 
                    [0,  np.cos(theta), np.sin(theta)], 
                    [0, -np.sin(theta), np.cos(theta)]])
-    return R
+    return R;
 #
-def RotY(theta)
+def RotY(theta):
     R = np.matrix([[np.cos(theta), 0, -np.sin(theta)], 
                    [0,             1,            0  ], 
                    [np.sin(theta), 0,  np.cos(theta)]]) 
-    return R
+    return R;
 #
-def RotZ(theta)
+def RotZ(theta):
     R = np.matrix([[ np.cos(theta), np.sin(theta), 0],  
                    [-np.sin(theta), np.cos(theta), 0],
                    [             0,             0, 1]]) 
-    return R
+    return R;
 #
 
 # Problem 1 -----------------------------------------------------------------
@@ -34,15 +34,15 @@ R = np.dot(Rx, Ry); # Total rotation matrix
 
 # Part a
 r1 = np.dot(R, r);
-print("Problem 1(a) r =  ")
-print( r1 )
-print( "" )
+print("Problem 1(a) r =  ");
+print( r1 );
+print( "" );
 
 # Part b
 r2 = np.dot(R.T, r);
-print("Problem 1(b) r = " )
-print(r2)
-print("")
+print("Problem 1(b) r = " );
+print(r2);
+print("");
 
 # Problem 2 -------------------------------------------------------------------
 d = 120;
@@ -53,8 +53,8 @@ beta0 = np.pi/2;
 gamma0 = 0;
 
 L1 = 500;
-theta1 = 2np.pi/3;
-beta1 = 2np.pi/3;
+theta1 = 2*np.pi/3;
+beta1 = 2*np.pi/3;
 gamma1 = -np.pi/2;
 
 # First position
@@ -89,7 +89,7 @@ CD = 200;
 
 # Define rotation matrices
 R1i = RotX(theta);
-R2i = np.dot( RotZ(np.pi - 50deg2rad), R1i );
+R2i = np.dot( RotZ(np.pi - 50*deg2rad), R1i );
 R3i = np.dot( RotX(-phi), R2i );
 
 # De
