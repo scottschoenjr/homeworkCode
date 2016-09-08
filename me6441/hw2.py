@@ -26,7 +26,7 @@ def RotZ(theta):
     return R;
 #
 
-# Problem 1 -----------------------------------------------------------------
+# Problem 1 ------------------------------------------
 r = np.matrix([[30], [80], [50]])
 Ry = RotY(65*deg2rad);
 Rz = RotZ(-145*deg2rad);
@@ -34,17 +34,17 @@ R = np.dot(Rz, Ry); # Total rotation matrix
 
 # Part a
 r1 = np.dot(R, r);
-print("Problem 1(a) r =  ");
+print("Problem 1(a) r = ");
 print( r1 );
 print( "" );
 
 # Part b
 r2 = np.dot(R.T, r);
-print("Problem 1(b) r = " );
+print("Problem 1(b) r = ");
 print(r2);
 print("");
 
-# Problem 2 -------------------------------------------------------------------
+# Problem 2 ------------------------------------------
 d = 120;
 
 L0 = 250;
@@ -74,33 +74,34 @@ r = np.matrix([[0],[L1],[d]])
 r1 = np.dot(Rtot.T, r)
 
 # Print results
-print("Problem 2 Delta r = " )
+print("Problem 2 Delta r = ")
 print( r1 - r0 )
-print( "" )
+print("")
 
-# Problem 4 -------------------------------------------------------------------
+# Problem 4 ------------------------------------------
 
 # Angles and distances of interest
 theta = 120*deg2rad;
 phi = -70*deg2rad;
+bendAngle = 50*deg2rad;
 AB = 400;
 BC = 400;
 CD = 200;
 
 # Define rotation matrices
 R1i = RotX(theta);
-R2i = np.dot( RotZ(np.pi - 50*deg2rad), R1i );
-R3i = np.dot( RotX(-phi), R2i );
+R2i = np.dot( RotZ(-bendAngle), R1i );
+R3i = np.dot( RotX(phi), R2i);
 
 # Define the position vectors in each frame
 v1 = np.matrix([[AB], [0],   [0]]);
-v2 = np.matrix([[BC], [0],   [0]]);
-v3 = np.matrix([[ 0], [-CD], [0]]);
+v2 = np.matrix([[-BC], [0],   [0]]);
+v3 = np.matrix([[ 0], [CD], [0]]);
 
 # Compute the vector in the inertial frame
 R = np.dot( R1i.T, v1 ) + np.dot( R2i.T, v2 ) + np.dot( R3i.T, v3 );
 
 # Print results
-print("Problem 4 R =  ")
+print("Problem 4 R = ")
 print( R )
-print("" )
+print("")
