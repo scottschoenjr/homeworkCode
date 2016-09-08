@@ -29,8 +29,8 @@ def RotZ(theta):
 # Problem 1 -----------------------------------------------------------------
 r = np.matrix([[30], [80], [50]])
 Ry = RotY(65*deg2rad);
-Rx = RotX(-135*deg2rad);
-R = np.dot(Rx, Ry); # Total rotation matrix
+Rz = RotZ(-145*deg2rad);
+R = np.dot(Rz, Ry); # Total rotation matrix
 
 # Part a
 r1 = np.dot(R, r);
@@ -59,7 +59,7 @@ gamma1 = -np.pi/2;
 
 # First position
 mat1 = RotZ(theta0);
-mat2 = RotY(np.pi/2 - beta0);
+mat2 = RotX(np.pi/2 - beta0);
 mat3 = RotY(gamma0);
 Rtot = np.dot( mat3, np.dot(mat2, mat1) );
 r = np.matrix([[0],[L0],[d]])
@@ -67,7 +67,7 @@ r0 = np.dot(Rtot.T, r)
 
 # Second position
 mat1 = RotZ(theta1);
-mat2 = RotY(np.pi/2 - beta1);
+mat2 = RotX(np.pi/2 - beta1);
 mat3 = RotY(gamma1);
 Rtot = np.dot( mat3, np.dot(mat2, mat1) );
 r = np.matrix([[0],[L1],[d]])
@@ -92,11 +92,12 @@ R1i = RotX(theta);
 R2i = np.dot( RotZ(np.pi - 50*deg2rad), R1i );
 R3i = np.dot( RotX(-phi), R2i );
 
-# De
+# Define the position vectors in each frame
 v1 = np.matrix([[AB], [0],   [0]]);
 v2 = np.matrix([[BC], [0],   [0]]);
 v3 = np.matrix([[ 0], [-CD], [0]]);
 
+# Compute the vector in the inertial frame
 R = np.dot( R1i.T, v1 ) + np.dot( R2i.T, v2 ) + np.dot( R3i.T, v3 );
 
 # Print results
