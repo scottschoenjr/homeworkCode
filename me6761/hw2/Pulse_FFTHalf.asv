@@ -11,19 +11,15 @@ T = 100; % [s]
 t0 = 50; % [s]
 
 % Create figure
-figure(16);
+figure(15);
 hold all;
 
-% Set tau values
-tauValues = [ 10, 1, 0.1 ]; % [s]
+% Set tau values as 1 for now
+tau = 1;
 
 % Define function for each tau
-omegac = 2.*pi.*fc;
-dt = 1./Fs;
-tVector = 0:dt:T;
-for count = 1:length( tauValues )
+
    
-    tau = tauValues(count);
     arg = ( (tVector - t0)./tau ).^(2);
     
     % Define signal

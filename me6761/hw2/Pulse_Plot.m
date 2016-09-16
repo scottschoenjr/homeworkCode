@@ -1,4 +1,4 @@
-% Problem 1
+% Problem 1(a)
 
 clear all
 close all
@@ -36,7 +36,7 @@ for count = 1:length( tauValues )
     
     % Add legend entry
     legString{count} = [ ...
-        '~$\tau$ = ', num2str(tau) ];
+        '~$\tau$ = ', num2str(tau), '~s' ];
     
 end
 
@@ -65,7 +65,7 @@ for count = 1:length( tauValues )
     
     % Add legend entry
     legString{count} = [ ...
-        '~$\tau$ = ', num2str(tau) ];
+        '~$\tau$ = ', num2str(tau), '~s' ];
     
 end
 
@@ -109,7 +109,7 @@ for count = 1:length( tauValues )
     
     % Add legend entry
     legString{count} = [ ...
-        '~$\tau$ = ', num2str(tau) ];
+        '~$\tau$ = ', num2str(tau), '~s' ];
     
 end
 

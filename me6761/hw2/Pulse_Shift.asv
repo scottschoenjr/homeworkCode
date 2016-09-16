@@ -9,70 +9,40 @@ Fs = 500; % [Hz]
 fc = 50; % [Hz]
 T = 100; % [s]
 t0 = 50; % [s]
-tau = 0.1;
+tau = 0.1; % [s]
+tShift = 10; % [s]
+omegac = 2.*pi.*fc; % [rad/s]
+dt = 1./Fs; % [s]
+tVector = 0:dt:T; % [s]
+fVector = linspace( 0, Fs, length(tVector) ); % [Hz]
+omegaVector = 2.*pi.*fVector; % [rad/s]
+
+% Define signal and shifted signal
+arg = ( (tVector - t0)./tau ).^(2);
+signal = sin( omegac.*tVector ).*exp( -arg );
+argShifted = ( (tVector - t0 - tShift)./tau ).^(2);
+signalShifted = sin( omegac.*(tVector - tShift) ).*exp( -argShifted );
+
+% Compute the fft of the signal
+X = fft( signal );
+Xshifted = X.*exp(-1j.*omegaVector.*tShift);
+
+% Reconstruct the signal with theime delay
+signalRecon = ifft( X );
+signalShiftedRecon = ifft( Xshifted );
 
 % Create figure
 figure(161);
 hold all;
 
-% Set tau values
-tauValues = [ 10, 1, 0.1 ]; % [s]
-
-% Define function for each tau
-omegac = 2.*pi.*fc;
-dt = 1./Fs;
-
-% Define signal
-arg = ( (tVector - t0)./tau ).^(2);
-signal = sin( omegac.*tVector ).*exp( -arg );
-
 % Plot signal
-plot( tVector, signal );
+plot( tVector, signalShifted - real(signalShiftedRecon) );
+plot( tVector, real(signalShiftedRecon) );
 
-% Define the frequency vector
-fVector = linspace( 0, Fs, length(tVector) );
-
-% Compute and plot the FFT for each value of tau
-t0 = 50; % Reset t0 [s]
-
-figure(162)
-set(gcf, 'Position', [100, 50, 1000, 850] );
-for count = 1:length( tauValues )
-   
-    tau = tauValues(count);
-    arg = ( (tVector - t0)./tau ).^(2);
-    
-    % Define signal
-    signal = sin( omegac.*tVector ).*exp( -arg );
-    
-    % Take FFT of signal
-    signalTilde = fft( signal );
-    
-    % Plot signal magnitude and phase
-    subplot(2, 1, 1);
-    hold all;
-    plot( fVector, abs(signalTilde)./max(abs(signalTilde)) );
-    subplot(2, 1, 2);
-    hold all;
-    plot( fVector, 180.*angle(signalTilde)./pi );
-    
-    % Add legend entry
-    legString{count} = [ ...
-        '~$\tau$ = ', num2str(tau) ];
-    
-end
-
-% Format plot
-subplot(2,1,1)
-ylabel('Normalized Magnitude');
-set(gca, 'XTickLabel', '' );
-xlim( [0, 250] );
-legend(legString, 'interpreter', 'latex');
+xlabel('Time [s]');
+xlim( [50, 60] );
+ylabel('$x(t-\tau) - F^{-1}[e^{-j\omega\tau}X(\omega)]$ [AU]', 'interpreter', 'latex', 'FontSize', 16);
+% legend( ' Original', ' Reconstructed');
 box on;
 
-subplot(2, 1, 2)
-ylabel( 'Phase [°]' );
-set( gca, 'YTick', -180:90:180 );
-xlabel('Frequency [Hz]');
-xlim( [0, 250] );
-box on;
+
