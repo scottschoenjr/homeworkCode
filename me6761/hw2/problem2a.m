@@ -13,7 +13,7 @@ t0 = 1;      % Time of the center of the signal [s]
 f0 = 50;    % Center frequency of the signal [Hz]
 BW = 0.1;    % Fractional bandwidth of the signal
 range = 7E3; % Range of the signal relative to the array center [m]
-bearing = 30.*pi./180; % Bearing of the source re array center [rad]
+bearing = 45.*pi./180; % Bearing of the source re array center [rad]
 
 % Define sensor parameters
 numSensors = 16;     % Number of sensors

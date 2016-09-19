@@ -57,20 +57,6 @@ for thetaCount = 1:length(thetaVector)
     tau = sum(bsxfun(@times, lookDirection', sensorPositions'), 3)./c0;
     tau = tau(:, 1); % Get rid of null columns
     
-%     %%%%%%% DEBUG %%%%%%%
-%     figure(1111)
-%     hold all;
-%     subplot( 2, 1, 1 )
-%     plot( [0, sin(theta)], [0, cos(theta)], '--k' );
-%     xlim( [-1, 1] );
-%     ylim( [0, 1] );
-%     subplot(2, 1, 2)
-%     plot( 1:numSensors, tau, 'ro' );
-%     xlabel( 'Sensor Number' );
-%     ylabel( 'Delay [s]' );
-%     pause;
-%     %%%%%%%%%%%%%%%%%%%%
-    
     % Now that we have the time delays, apply them to the source by
     % way of a factor of e^(j*omega*tau) at each frequency
     for freqCount = 1 : floor(length(fVector)./2)

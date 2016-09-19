@@ -20,7 +20,36 @@ tVector = 0:dt:T;
 fVector = linspace( 0, Fs, length(tVector) );
 
 % Compute FFT for each
-figure(13)
+figure(131)
+for count = 1:length( tauValues )
+   
+    tau = tauValues(count);
+    arg = ( (tVector - t0)./tau ).^(2);
+    
+    % Define signal
+    signal = sin( omegac.*tVector ).*exp( -arg );
+    
+    % Take FFT of signal
+    signalTilde = fft( signal );
+    
+    % Plot signal magnitude
+    hold all;
+    plot( fVector, abs(signalTilde)./max(abs(signalTilde)) );
+    
+    % Add legend entry
+    legString{count} = [ ...
+        '~$\tau$ = ', num2str(tau) ];
+    
+end
+
+% Format plot
+ylabel('Normalized Magnitude');
+xlabel('Frequency [Hz]');
+xlim( [0, 100] );
+legend(legString, 'interpreter', 'latex');
+box on;
+
+figure(132)
 set(gcf, 'Position', [100, 50, 1000, 850] );
 for count = 1:length( tauValues )
    

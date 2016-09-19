@@ -13,25 +13,35 @@ t0 = 1;      % Time of the center of the signal [s]
 f0 = 50;    % Center frequency of the signal [Hz]
 BW = 0.1;    % Fractional bandwidth of the signal
 range = 7E3; % Range of the signal relative to the array center [m]
-bearing = 30.*pi./180; % Bearing of the source re array center [rad]
+bearing1 = 45.*pi./180; % Bearing of the source re array center [rad]
+bearing2 = 38.6.*pi./180; % Bearing of the source re array center [rad]
 
 % Define sensor parameters
 numSensors = 16;     % Number of sensors
 spacing = 15;        % Spacing between sensors [m]
-dtheta = 1.*pi./180; % Angular resolution [rad]
+dtheta = 0.5.*pi./180; % Angular resolution [rad]
 c0 = 1500;           % Sound Speed [m/s]
 
 % -------------------------------------------------------------------------
 
-% Assemble source struct
+% Assemble first source struct
 dt = 1./Fs;
-source.tVector = 0:dt:tMax;
-source.t0 = t0;
-source.tMax = tMax;
-source.BW = 0; % 0 will give plane wave
-source.fVector = linspace( 0, Fs, length(source.tVector) );
-source.f0 = f0;
-source.position = [ range.*sin( bearing ); range.*cos( bearing ); 0 ];
+source1.tVector = 0:dt:tMax;
+source1.t0 = t0;
+source1.tMax = tMax;
+source1.BW = 0; % 0 will give plane wave
+source1.fVector = linspace( 0, Fs, length(source1.tVector) );
+source1.f0 = f0;
+source1.position = [ range.*sin( bearing1 ); range.*cos( bearing1 ); 0 ];
+% And second source struct
+dt = 1./Fs;
+source2.tVector = 0:dt:tMax;
+source2.t0 = t0;
+source2.tMax = tMax;
+source2.BW = 0; % 0 will give plane wave
+source2.fVector = linspace( 0, Fs, length(source2.tVector) );
+source2.f0 = f0;
+source2.position = [ range.*sin( bearing2 ); range.*cos( bearing2 ); 0 ];
 
 % Assemble sensor struct
 sensors.number = numSensors;
@@ -41,13 +51,19 @@ sensors.dtheta = dtheta;
 sensors.soundSpeed = c0;
 
 % Get the array response as a function of theta
-[ arrayResponse, thetaVector ] = getLineArrayResponse( source, sensors );
+[ arrayResponse1, thetaVector1 ] = getLineArrayResponse( source1, sensors );
+[ arrayResponse2, thetaVector2 ] = getLineArrayResponse( source2, sensors );
+arrayResponseTotal = arrayResponse1 + arrayResponse2;
 
 % Plot results
 figure()
 hold all
-plot( 180.*thetaVector./pi, ...
-    max(arrayResponse)./max(max(arrayResponse)), 'k' );
+plot( 180.*thetaVector1./pi, ...
+    max(arrayResponseTotal)./max(max(arrayResponseTotal)), 'k' );
+plot( 180.*thetaVector1./pi, ...
+    max(arrayResponse1)./max(max(arrayResponseTotal)), '--k', 'LineWidth', 1 );
+plot( 180.*thetaVector2./pi, ...
+    max(arrayResponse2)./max(max(arrayResponseTotal)), ':k', 'LineWidth', 1 );
 xlabel( 'Bearing Angle \beta [deg]' );
 xlim( [-90, 90] );
 set(gca, 'XTick', -90:30:90 );

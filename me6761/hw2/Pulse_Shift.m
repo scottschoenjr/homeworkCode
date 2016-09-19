@@ -5,7 +5,7 @@ close all
 clc
 
 % Set parameters
-Fs = 500; % [Hz]
+Fs = 5000; % [Hz]
 fc = 50; % [Hz]
 T = 100; % [s]
 t0 = 50; % [s]
@@ -40,9 +40,9 @@ plot( tVector, signalShifted );
 plot( tVector, real(signalShiftedRecon) );
 
 xlabel('Time [s]');
-xlim( [50, 70] );
-ylabel('$x(t-\tau) - F^{-1}[e^{-j\omega\tau}X(\omega)]$ [AU]', 'interpreter', 'latex', 'FontSize', 16);
-% legend( ' Original', ' Reconstructed');
+xlim( [59.8, 60.2] );
+ylabel('$f(t - t_{0}) / F^{-1}[e^{-j\omega t_{0}}X(\omega)]$ [AU]', 'interpreter', 'latex', 'FontSize', 16);
+legend( ' Original', ' Reconstructed');
 box on;
 
 
