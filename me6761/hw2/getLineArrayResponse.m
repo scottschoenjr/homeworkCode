@@ -11,6 +11,7 @@ fVector = source.fVector;
 f0 = source.f0;
 BW = source.BW;
 sourcePosition = source.position;
+pulseSignal = ( BW ~= 0 );
 
 numSensors = sensors.number;
 dtheta = sensors.dtheta;
@@ -30,51 +31,58 @@ sensorTimeDelays = sqrt( sum( vectorsToSource.^(2) ) )./c0;
 receivedData = zeros( numSensors, length(tVector) ); % Initialize
 for sensorCount = 1:numSensors
     currentT = tVector - t0 - sensorTimeDelays( sensorCount );
-    receivedData( sensorCount, : ) = gauspuls( currentT, f0, BW );
+    
+    if pulseSignal
+        receivedData( sensorCount, : ) = gauspuls( currentT, f0, BW );
+    else
+        receivedData( sensorCount, : ) = cos( 2.*pi.*f0.*currentT );
+    end
 end
-
-%%%%%%%% DEBUG %%%%%%%%%%%%
-figure()
-hold all;
-interval = 2.5;
-for count = 1:numSensors
-    plot( tVector, receivedData(count, :) + interval.*(count - 1) );
-end
-xlabel( 'Time [s]' );
-set( gca, ...
-    'YTick', 0:interval:numSensors.*interval, ...
-    'YTickLabel', '' );
-%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Get the frequency domain signal
-receivedDataTilde = fft( receivedData );
+receivedDataTilde = fft( receivedData' );
+receivedDataTilde = receivedDataTilde'; % Keep dimensions of receivedData
 
-% Compute angle vector
-thetaVector = 0:dtheta:pi;
+% Compute angle vector note that this is polar angle
+thetaVector = -pi:dtheta:pi;
 
 % Compute the beamformer output for each look angle
 for thetaCount = 1:length(thetaVector)
     
     % Get look direction unit vector
     theta = thetaVector(thetaCount);
-    lookDirection = [ cos(theta); sin(theta); 0 ];
+    lookDirection = [ sin(theta); cos(theta); 0 ];
     
     % Compute the associated delays
     tau = sum(bsxfun(@times, lookDirection', sensorPositions'), 3)./c0;
     tau = tau(:, 1); % Get rid of null columns
     
+%     %%%%%%% DEBUG %%%%%%%
+%     figure(1111)
+%     hold all;
+%     subplot( 2, 1, 1 )
+%     plot( [0, sin(theta)], [0, cos(theta)], '--k' );
+%     xlim( [-1, 1] );
+%     ylim( [0, 1] );
+%     subplot(2, 1, 2)
+%     plot( 1:numSensors, tau, 'ro' );
+%     xlabel( 'Sensor Number' );
+%     ylabel( 'Delay [s]' );
+%     pause;
+%     %%%%%%%%%%%%%%%%%%%%
+    
     % Now that we have the time delays, apply them to the source by
     % way of a factor of e^(j*omega*tau) at each frequency
     for freqCount = 1 : floor(length(fVector)./2)
-        factor = exp( 2.*pi.*fVector(freqCount).*tau );
+        factor = exp( 1j.*2.*pi.*fVector(freqCount).*tau );
         % Apply the factor to the output
         arrayResponse( freqCount, thetaCount ) = ...
             abs( factor'*receivedDataTilde( :, freqCount ) );
     end
 end
 
-% Convert back to time domain
-arrayOutput = ( 2./length(tVector) )*real( ifft(arrayResponse, [], 1) );
+% Convert back to time domain (why fiip?)
+arrayOutput = fliplr(( 2./length(tVector) )*real( ifft(arrayResponse, [], 1) ));
 
 end
 
