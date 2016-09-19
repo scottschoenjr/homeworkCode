@@ -1,61 +1,50 @@
-% Problem 2 (function so we can have subroutines)
+% Problem 2
 
-function [] = problem2()
+% clear all;
+close all;
+clc;
 
-clear all
-close all
-clc
+% -----------------------------------------------------------------------
 
-% Define array positions along the x-axis
-numSensors = 16; % Number of sensors
-spacing = 15;    % Spacing between sensors [m]
+% Define time and signal parameters
+Fs = 1E3;   % Sampling frequency [Hz]
+tMax = 10;   % Time to record for [s]
+t0 = 1;      % Time of the center of the signal [s]
+f0 = 100;    % Center frequency of the signal [Hz]
+BW = 0.1;    % Fractional bandwidth of the signal
+range = 7E3; % Range of the signal relative to the array center [m]
+bearing = 38.7.*pi./180; % Bearing of the source re array center [rad]
+
+% Define sensor parameters
+numSensors = 16;     % Number of sensors
+spacing = 15;        % Spacing between sensors [m]
 dtheta = 1.*pi./180; % Angular resolution [rad]
-c0 = 1500; % Sound Speed [m/s]
+c0 = 1500;           % Sound Speed [m/s]
 
-% Get sensor positions along axis
-sensorPositions = getSensorPositions( numSensors, spacing );
+% -------------------------------------------------------------------------
 
-% Compute angle vector
-thetaVector = 0:dtheta:pi;
+% Assemble source struct
+dt = 1./Fs;
+source.tVector = 0:dt:tMax;
+source.t0 = t0;
+source.tMax = tMax;
+source.BW = BW;
+source.fVector = linspace( 0, Fs, length(source.tVector) );
+source.f0 = f0;
+source.position = [ range.*cos( bearing ); range.*sin( bearing ); 0 ];
 
-% Compute the beamformer output for each look angle
-for count = 1:length(thetaVector)
-    
-    % Get look direction unit vector
-    theta = thetaVector(count);
-    lookDirection = [ cos(theta); sin(theta); 0 ]; 
-    
-    % Dot each sensor position with the look direction to get the
-    % associated time delays
-    directionalDelays = ...
-        bsxfun(@times, lookDirection, sensorPositions)./c0;
-    % The total delay is the sum of the delays in each direction
-    timeDelays = sum( directionalDelays', 2);
+% Assemble sensor struct
+sensors.number = numSensors;
+sensors.spacing = 15;
+sensors.positions = NaN; % Specify non-uniform or other sensor spacing here
+sensors.dtheta = dtheta;
+sensors.soundSpeed = c0;
 
-end
+% Get the array response as a function of theta
+[ arrayReposnse, thetaVector ] = getLineArrayResponse( source, sensors );
 
-end
-
-
-% --------------------- SUBROUTINES --------------------------
-function [sensorPositions] = getSensorPositions( numSensors, spacing )
-
-% If the number of positions is even, place the origin between the two
-% middle sensors. Otherwise, place the origin at the middle sensor.
-numSensorsEven = ( numSensors./2 - floor(numSensors./2) == 0 );
-if numSensorsEven
-    xStart = (-(numSensors-1)./2).*spacing;
-    xEnd = ((numSensors-1)./2).*spacing;
-    xPos = xStart:spacing:xEnd;
-else
-    xStart = (-numSensors./2).*spacing;
-    xEnd = (numSensors./2).*spacing;
-    xPos = xStart:spacing:xEnd;
-end
-
-% Sensors are in the x-y plane
-yPos = 0.*xPos;
-zPos = 0.*xPos;
-sensorPositions = [ xPos; yPos; zPos ];
-
-end
+% Plot results
+figure()
+plot( 180.*thetaVector./pi, max(arrayReposnse) );
+xlabel( '\theta [deg]' );
+ylabel( 'Normalized Response' );
