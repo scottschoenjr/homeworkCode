@@ -1,4 +1,4 @@
-% Problem 2a
+% Problem 2a - Harmonic source
 
 clear all;
 close all;

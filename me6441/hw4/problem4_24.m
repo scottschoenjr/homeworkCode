@@ -1,4 +1,4 @@
-% Problem 4-24 in "Engineering Dynamics" (Ginsberg, 2008)
+% Problem 4-24 in _Engineering Dynamics_ (Ginsberg, 2008)
 
 clear all
 close all
@@ -57,7 +57,7 @@ fprintf( 'psidot   = %0.4f rad/s\n\n', psidot_computed );
 syms aA betaddot psiddot
 
 % Known accleration of B
-aB = -500*e_X;
+aB = 500*e_X;
 
 % Define rotational velocity we just solved for
 omegaAB = betadot_computed*e_pin + psidot_computed*e_X;

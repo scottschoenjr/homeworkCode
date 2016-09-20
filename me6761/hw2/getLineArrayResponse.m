@@ -4,18 +4,11 @@ function [ arrayOutput, thetaVector ] = ...
     getLineArrayResponse( source, sensors )
 
 % Get values from input structs
-tVector = source.tVector;
-t0 = source.t0;
-tMax = source.tMax;
-fVector = source.fVector;
-f0 = source.f0;
-BW = source.BW;
-sourcePosition = source.position;
-pulseSignal = ( BW ~= 0 );
-
 numSensors = sensors.number;
 dtheta = sensors.dtheta;
 c0 = sensors.soundSpeed;
+
+numSources = length(source);
 
 % Get sensor positions along axis
 if isnan( sensors.positions )
@@ -26,17 +19,36 @@ else
 end
 
 % Get the signal received be each sensor
-vectorsToSource = bsxfun( @minus, sensorPositions, sourcePosition );
-sensorTimeDelays = sqrt( sum( vectorsToSource.^(2) ) )./c0;
-receivedData = zeros( numSensors, length(tVector) ); % Initialize
-for sensorCount = 1:numSensors
-    currentT = tVector - t0 - sensorTimeDelays( sensorCount );
+tVector = source(1).tVector;
+numTimePoints = length(tVector);
+receivedData = zeros( numSensors, numTimePoints );
+for sourceCount = 1:numSources
     
-    if pulseSignal
-        receivedData( sensorCount, : ) = gauspuls( currentT, f0, BW );
-    else
-        receivedData( sensorCount, : ) = cos( 2.*pi.*f0.*currentT );
-    end
+    % Get values for this source
+    t0 = source(sourceCount).t0;
+    tMax = source(sourceCount).tMax;
+    fVector = source(sourceCount).fVector;
+    f0 = source(sourceCount).f0;
+    BW = source(sourceCount).BW;
+    sourcePosition = source(sourceCount).position;
+    pulseSignal = ( BW ~= 0 );
+    
+    vectorsToSource = bsxfun( @minus, sensorPositions, sourcePosition );
+    sensorTimeDelays = sqrt( sum( vectorsToSource.^(2) ) )./c0;
+
+    % Get the signal at each sensor
+    for sensorCount = 1:numSensors
+        currentT = tVector - t0 - sensorTimeDelays( sensorCount );
+        if pulseSignal
+            receivedData( sensorCount, : ) = ...
+                receivedData(sensorCount, :) + ...
+                gauspuls( currentT, f0, BW );
+        else
+            receivedData( sensorCount, : ) = ...
+                receivedData(sensorCount, :) + ...
+                cos( 2.*pi.*f0.*currentT );
+        end
+    end   
 end
 
 % Get the frequency domain signal
