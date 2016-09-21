@@ -57,7 +57,7 @@ fprintf( 'psidot   = %0.4f rad/s\n\n', psidot_computed );
 syms aA betaddot psiddot
 
 % Known accleration of B
-aB = 500*e_X;
+aB = -500*e_X;
 
 % Define rotational velocity we just solved for
 omegaAB = betadot_computed*e_pin + psidot_computed*e_X;
@@ -68,7 +68,7 @@ alpha = ...
 
 % Assemble the acceleration equation
 LHS = aB + cross( alpha, r_AB ) + cross( omegaAB, cross( omegaAB, r_AB ) );
-RHS = -aA*cos(gamma)*e_Y + aA*cos(gamma)*e_Z;
+RHS = aA*cos(gamma)*e_Y - aA*sin(gamma)*e_Z;
 accelerationEquation = LHS - RHS;
 
 accelerationSolutionStruct = solve( ...

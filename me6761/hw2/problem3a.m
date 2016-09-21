@@ -1,4 +1,4 @@
-% Problem 2a - Harmonic source
+% Problem 3a - Pulse source
 
 clear all;
 close all;
@@ -28,7 +28,7 @@ dt = 1./Fs;
 source.tVector = 0:dt:tMax;
 source.t0 = t0;
 source.tMax = tMax;
-source.BW = 0; % 0 will give plane wave
+source.BW = BW; % 0 will give plane wave
 source.fVector = linspace( 0, Fs, length(source.tVector) );
 source.f0 = f0;
 source.position = [ range.*sin( bearing ); range.*cos( bearing ); 0 ];

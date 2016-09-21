@@ -1,4 +1,4 @@
-% Problem 2c - More Sensors
+% Problem 3d - Change Frequency of second source
 
 clear all;
 close all;
@@ -10,8 +10,9 @@ clc;
 Fs = 400;   % Sampling frequency [Hz]
 tMax = 10;   % Time to record for [s]
 t0 = 1;      % Time of the center of the signal [s]
-f0 = 50;    % Center frequency of the signal [Hz]
-BW = 0.0;    % Fractional bandwidth of the signal
+f01 = 50;    % Center frequency of the first signal [Hz]
+f02 = 25;    % Center frequency of the first signal [Hz]
+BW = 0.1;    % Fractional bandwidth of the signal
 range = 7E3; % Range of the signal relative to the array center [m]
 bearing1 = 45.*pi./180; % Bearing of the source re array center [rad]
 bearing2 = 38.7.*pi./180; % Bearing of the source re array center [rad]
@@ -29,9 +30,9 @@ dt = 1./Fs;
 source1.tVector = 0:dt:tMax;
 source1.t0 = t0;
 source1.tMax = tMax;
-source1.BW = 0; % 0 will give plane wave
+source1.BW = BW; % 0 will give plane wave
 source1.fVector = linspace( 0, Fs, length(source1.tVector) );
-source1.f0 = f0;
+source1.f0 = f01;
 source1.amplitude = 1;
 source1.position = [ range.*sin( bearing1 ); range.*cos( bearing1 ); 0 ];
 % And second source struct
@@ -39,9 +40,9 @@ dt = 1./Fs;
 source2.tVector = 0:dt:tMax;
 source2.t0 = t0;
 source2.tMax = tMax;
-source2.BW = 0; % 0 will give plane wave
+source2.BW = BW; % 0 will give plane wave
 source2.fVector = linspace( 0, Fs, length(source2.tVector) );
-source2.f0 = f0;
+source2.f0 = f02;
 source2.amplitude = 1;
 source2.position = [ range.*sin( bearing2 ); range.*cos( bearing2 ); 0 ];
 % Specify Noise Source struct
@@ -51,7 +52,7 @@ noise.t0 = t0;
 noise.tMax = tMax;
 noise.BW = -1; % Negative value to provide noise
 noise.fVector = linspace( 0, Fs, length(source1.tVector) );
-noise.f0 = f0;
+noise.f0 = f01;
 noise.position = [ range.*sin( bearing1 ); range.*cos( bearing1 ); 0 ];
 noise.amplitude = 3.16E-4; % = 50dB [Pa]
 
@@ -85,8 +86,8 @@ xlim( [-90, 90] );
 set(gca, 'XTick', -90:30:90 );
 ylabel( 'Normalized Response' );
 ylim([0, 1.2]);
-title( sprintf( '%d Sensors, Spacing = %0.2f m', numSensors, spacing ) );
-legend( [source1Plot, source2Plot, totalPlot], ...
-    ' Source 1', ' Source 2', ' Total', ...
-    'Location', 'NorthWest');
+title( sprintf( 'f_{0} = %0.2f Hz', f01 ) );
+% legend( [source1Plot, source2Plot, totalPlot], ...
+%     ' Source 1', ' Source 2', ' Total', ...
+%     'Location', 'NorthWest');
 box on;

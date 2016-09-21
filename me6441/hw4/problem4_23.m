@@ -28,8 +28,8 @@ e_pin = cross( e_Y, r_CD );
 e_pin = e_pin./norm(e_pin);
 
 % Define the sides of the velocity equation
-LHS = -(rBC*omegaA*e_X) + cross( (betadot*e_pin + psidot*e_X), r_CD );
-RHS = -vD*e_Z;
+LHS = -(rBC*omegaA*e_X) + cross( (betadot*e_pin + psidot*e_Y), r_CD );
+RHS = vD*e_Z;
 
 % Assemble and solve the velocity equation
 velocityEquation = LHS - RHS;

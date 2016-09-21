@@ -31,7 +31,9 @@ for sourceCount = 1:numSources
     f0 = source(sourceCount).f0;
     BW = source(sourceCount).BW;
     sourcePosition = source(sourceCount).position;
-    pulseSignal = ( BW ~= 0 );
+    sourceAmplitude = source(sourceCount).amplitude;
+    pulseSignal = ( BW > 0 );
+    noiseSignal = ( BW < 0 );
     
     vectorsToSource = bsxfun( @minus, sensorPositions, sourcePosition );
     sensorTimeDelays = sqrt( sum( vectorsToSource.^(2) ) )./c0;
@@ -42,11 +44,15 @@ for sourceCount = 1:numSources
         if pulseSignal
             receivedData( sensorCount, : ) = ...
                 receivedData(sensorCount, :) + ...
-                gauspuls( currentT, f0, BW );
+                sourceAmplitude.*gauspuls( currentT, f0, BW );
+        elseif noiseSignal
+            receivedData( sensorCount, : ) = ...
+                receivedData(sensorCount, :) + ...
+                sourceAmplitude.*randn( 1, length(currentT) );
         else
             receivedData( sensorCount, : ) = ...
                 receivedData(sensorCount, :) + ...
-                cos( 2.*pi.*f0.*currentT );
+                sourceAmplitude.*cos( 2.*pi.*f0.*currentT );
         end
     end   
 end
@@ -56,7 +62,7 @@ receivedDataTilde = fft( receivedData' );
 receivedDataTilde = receivedDataTilde'; % Keep dimensions of receivedData
 
 % Compute angle vector note that this is polar angle
-thetaVector = -pi:dtheta:pi;
+thetaVector = -pi./2:dtheta:pi./2;
 
 % Compute the beamformer output for each look angle
 for thetaCount = 1:length(thetaVector)
@@ -80,7 +86,8 @@ for thetaCount = 1:length(thetaVector)
 end
 
 % Convert back to time domain (why fiip?)
-arrayOutput = fliplr(( 2./length(tVector) )*real( ifft(arrayResponse, [], 1) ));
+arrayOutput = ...
+    fliplr(( 2./length(tVector) )*real( ifft(arrayResponse, [], 1) ));
 
 end
 

@@ -1,4 +1,4 @@
-% Problem 2c - More Sensors
+% Problem 2d - Change Frequency
 
 clear all;
 close all;
@@ -10,7 +10,7 @@ clc;
 Fs = 400;   % Sampling frequency [Hz]
 tMax = 10;   % Time to record for [s]
 t0 = 1;      % Time of the center of the signal [s]
-f0 = 50;    % Center frequency of the signal [Hz]
+f0 = 125;    % Center frequency of the signal [Hz]
 BW = 0.0;    % Fractional bandwidth of the signal
 range = 7E3; % Range of the signal relative to the array center [m]
 bearing1 = 45.*pi./180; % Bearing of the source re array center [rad]
@@ -85,8 +85,8 @@ xlim( [-90, 90] );
 set(gca, 'XTick', -90:30:90 );
 ylabel( 'Normalized Response' );
 ylim([0, 1.2]);
-title( sprintf( '%d Sensors, Spacing = %0.2f m', numSensors, spacing ) );
-legend( [source1Plot, source2Plot, totalPlot], ...
-    ' Source 1', ' Source 2', ' Total', ...
-    'Location', 'NorthWest');
+title( sprintf( 'f_{0} = %0.2f Hz', f0 ) );
+% legend( [source1Plot, source2Plot, totalPlot], ...
+%     ' Source 1', ' Source 2', ' Total', ...
+%     'Location', 'NorthWest');
 box on;

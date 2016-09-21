@@ -42,10 +42,11 @@ fprintf( 'betadot = %0.4f *omega rad/s\n\n', betadot_computed );
 % Acceleration
 syms udot betaddot
 
-% The RHS is zero, so simply define the LHS
-accelerationEquation = ...
-    udot*e_X - (u_computed.^(2)/R)*e_Y + R*betaddot*( e_X - e_Y ) + ...
-    R*betadot_computed.^(2)*(e_X + e_Y) - 2*betaddot*u_computed*e_Y;
+% Define LHS and RHS of accleration expression
+LHS = omegaAB.^(2)*L*( cos(theta)*e_X - sin(theta)*e_Y );
+RHS = udot*e_X - (u_computed.^(2)/R)*e_Y + R*betaddot*( e_X - e_Y ) - ...
+    R*betadot_computed.^(2)*(e_X + e_Y) + 2*betadot_computed*u_computed*e_Y;
+accelerationEquation = RHS - LHS;
 
 % Solve
 accelerationSolutionStruct = solve( ...
