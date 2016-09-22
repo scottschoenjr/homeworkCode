@@ -49,9 +49,9 @@ betadot_computed = double( velocitySolutionStruct.betadot );
 psidot_computed = double( velocitySolutionStruct.psidot );
 
 % Print results
-fprintf( 'v_A      = %0.4f m/s\n', vA_computed );
-fprintf( 'thetadot = %0.4f rad/s\n', betadot_computed );
-fprintf( 'psidot   = %0.4f rad/s\n\n', psidot_computed );
+fprintf( 'v_A     = %0.4f m/s\n', vA_computed );
+fprintf( 'detadot = %0.4f rad/s\n', betadot_computed );
+fprintf( 'psidot  = %0.4f rad/s\n\n', psidot_computed );
 
 % Accleration
 syms aA betaddot psiddot
@@ -81,9 +81,9 @@ betaddot = double( accelerationSolutionStruct.betaddot );
 psiddot = double( accelerationSolutionStruct.psiddot );
 
 % Print results
-fprintf( 'a_A       = %0.4f m/s^2\n', aA );
-fprintf( 'thetaddot = %0.4f rad/s^2\n', betaddot );
-fprintf( 'psiddot   = %0.4f rad/s^2\n', psiddot );
+fprintf( 'a_A      = %0.4f m/s^2\n', aA );
+fprintf( 'betaddot = %0.4f rad/s^2\n', betaddot );
+fprintf( 'psiddot  = %0.4f rad/s^2\n', psiddot );
 
 
     

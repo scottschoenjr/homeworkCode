@@ -7,7 +7,7 @@ clc;
 % -----------------------------------------------------------------------
 
 % Define time and signal parameters
-Fs = 400;   % Sampling frequency [Hz]
+Fs = 1000;   % Sampling frequency [Hz]
 tMax = 10;   % Time to record for [s]
 t0 = 1;      % Time of the center of the signal [s]
 f0 = 125;    % Center frequency of the signal [Hz]

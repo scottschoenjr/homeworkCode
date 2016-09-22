@@ -19,7 +19,7 @@ bearing2 = 38.7.*pi./180; % Bearing of the source re array center [rad]
 
 % Define sensor parameters
 numSensors = 16;     % Number of sensors
-spacing = 15;        % Spacing between sensors [m]
+spacing = 30;        % Spacing between sensors [m]
 dtheta = 0.5.*pi./180; % Angular resolution [rad]
 c0 = 1500;           % Sound Speed [m/s]
 
@@ -86,8 +86,8 @@ xlim( [-90, 90] );
 set(gca, 'XTick', -90:30:90 );
 ylabel( 'Normalized Response' );
 ylim([0, 1.2]);
-title( sprintf( 'f_{0} = %0.2f Hz', f01 ) );
-% legend( [source1Plot, source2Plot, totalPlot], ...
-%     ' Source 1', ' Source 2', ' Total', ...
-%     'Location', 'NorthWest');
+% title( sprintf( 'f_{0} = %0.2f Hz', f01 ) );
+legend( [source1Plot, source2Plot, totalPlot], ...
+    ' Source 1', ' Source 2', ' Total', ...
+    'Location', 'NorthWest');
 box on;

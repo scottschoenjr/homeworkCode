@@ -1,4 +1,33 @@
-% Problem 2 (function so we can have subroutines)
+%*********************************************************************
+%
+% Get Line Array Reponse
+%
+%   Function to compute the array response for an array for given source(s)
+%   and set of sensor positions.
+%
+% Inputs
+%   source. - Array of structs describing each source with fields
+%     tVector   - Time vector [s]
+%     t0        - Shift time [s]
+%     tMax      - Maximum time [s]
+%     BW        - Fractional bandwidth of pulse (0 for plane wave, -1 for
+%                 noise)
+%     fVector   - Frequency vector [Hz]
+%     f0        - Center frequency [Hz]
+%     position  - Position of source (x, y, z)^T [m]
+%     amplitude - Amplitude of source [Pa]
+%
+%   sensors.
+%      number     - Number of sensors
+%      spacing    - Spacing between the sensors
+%      positions  - (x, y, z)^T positions of the sensors [m]. If NaN is
+%                   specified, a line source is created with the above
+%      dtheta     - Increment of theta to compute over [rad];
+%      soundSpeed - Sound speed in the medium [m/s]
+%
+%    20160921 Scott Schoen Jr
+%
+%*********************************************************************
 
 function [ arrayOutput, thetaVector ] = ...
     getLineArrayResponse( source, sensors )
@@ -85,7 +114,7 @@ for thetaCount = 1:length(thetaVector)
     end
 end
 
-% Convert back to time domain (why fiip?)
+% Convert back to time domain (why flip?)
 arrayOutput = ...
     fliplr(( 2./length(tVector) )*real( ifft(arrayResponse, [], 1) ));
 
