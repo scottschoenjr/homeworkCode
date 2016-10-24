@@ -27,6 +27,9 @@ Omega = 100; % [rad/s]
 omega = Omega.*e_x1;
 alpha = 0.*omega;
 
+% Define applied torque
+Gamma0 = 3E3; % [Nm]
+
 % Define omega matrix
 omega_x = dot( omega, e_x );
 omega_y = dot( omega, e_y );
@@ -52,7 +55,11 @@ I = [ I_xx,    0,   0; ...
 M = I*alpha + omegaMat*I*omegaVec;
 
 % Define total torque in z
-A_z = m*Omega.^(2)*cos(theta).*sin(theta).*(l_x.^(2) + l_y.^(2))./(24.*L);
-    
+A_z = m*Omega.^(2)*cos(theta).*sin(theta).*(l_y.^(2) - l_x.^(2))./(24.*L)
+
+% Define angular acceleration components
+alpha_x = 24.*(A_z.*sin(theta) - Gamma0.*cos(theta))./(m.*l_x.^(2))
+alpha_y = 24.*(A_z.*cos(theta) + Gamma0.*sin(theta))./(m.*l_y.^(2)) 
+alpha = alpha_x.*cos(theta) + alpha_y.*sin(theta)
 
 
