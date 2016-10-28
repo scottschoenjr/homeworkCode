@@ -16,7 +16,7 @@ x, z_a = np.meshgrid(x_1d, z_1d_above);
 x, z_b = np.meshgrid(x_1d, z_1d_below);
 
 # Set material parameters
-f = 2000; # Frequency [Hz]
+f = 5000; # Frequency [Hz]
 c0 = 343; # Sound speed in fluid [m/s]
 rho0 = 1.225; # Density of fluid [kg/m^3]
 L = 3E-3; # Plate thickness [m]
@@ -88,13 +88,16 @@ cbar.set_label(r'Normalized Pressure', fontsize=15, family='serif');
 plt.ylabel(r'$z$ [m]',fontsize=18, family='serif');
 plt.xlabel(r'$x - x_{0}$ [m]',fontsize=18, family='serif');
 
+plt.xticks( fontsize=12, family='serif' );
+plt.yticks( fontsize=12, family='serif' );
+
 plt.show();
 
 # Plot velocity
 plt.figure()
 
 step = round( nPoints/50 );
-scaleFactor = 320;
+scaleFactor = 380;
 width = 0.2;
 
 quiverPlotHandle1 = \
@@ -106,10 +109,13 @@ quiverPlotHandle2 = \
     np.real(vx_b[::step,::step]), np.real(vz_b[::step,::step]), \
     angles='xy', scale=scaleFactor);
 
-plt.xlim([0, 2*width]);
-plt.ylabel(r'$z$ [m]',fontsize=18, family='serif');
 plt.ylim([-width, width]);
+plt.ylabel(r'$z$ [m]',fontsize=18, family='serif');
+plt.yticks( fontsize=12, family='serif' );
+
+plt.xlim([0, 2*width]);
 plt.xlabel(r'$x - x_{0}$ [m]',fontsize=18, family='serif');
+plt.xticks( fontsize=12, family='serif' );
 
 plt.show()
 
