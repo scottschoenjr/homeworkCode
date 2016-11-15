@@ -16,13 +16,16 @@ clc
 fc = 100; % Center frequency [Hz]
 
 % Set range of tau values to sweep over
-numTaus = 5;
+numTaus = 3;
 tauVector = linspace( 0.010, 0.015, numTaus );
 
 % Create time vector for each pulse
-tVector = linspace( 0, 1, 20000);
+tVector = linspace( 0, 1, 50E3);
 dt = tVector(2) - tVector(1);
 fVector = linspace( 0, 1./dt, length(tVector) );
+
+% Set lineshapes
+lineShapes = { '--k'; '-k'; '-.k' }; 
 
 % Compute the pulse for each tau
 for tauCount = 1:numTaus
@@ -34,8 +37,9 @@ for tauCount = 1:numTaus
     % Plot spectrum
     figure(1)
     hold all;
-    plot( fVector, 20.*log10(abs(F)./max(abs(F))) )
-    legendString{ tauCount } = [' \tau = ', sprintf('%0.3f', tau) ];
+    plot( fVector, 20.*log10(abs(F)./max(abs(F))), lineShapes{tauCount} )
+    legendString{ tauCount } = ...
+        [' \tau = ', sprintf('%0.1f', 1E3.*tau), ' ms' ];
     
 end
 
