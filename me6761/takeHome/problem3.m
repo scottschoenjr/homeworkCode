@@ -51,7 +51,7 @@ sTilde = fft(s);
 sRecTilde = 0.*sTilde;
 
 % Get the contribution at each frequency
-for fCount = 1:length(fVector)
+parfor fCount = 1:length(fVector)
     
    % Compute calculations only within bandwidth to save time
    % NOTE - This assumes fVector increases monotonically!
@@ -59,7 +59,7 @@ for fCount = 1:length(fVector)
    if f < fMin
        continue;
    elseif f > fMax
-       break;
+       continue; % Break not allowed in parfor
    end
    
    % Initialize Green's function at this frequency
