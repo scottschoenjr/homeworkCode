@@ -27,26 +27,23 @@ gamma = pi/2 - q2;
 Ry = [ cos(gamma), 0, sin(gamma); 
                 0, 1,          0;
       -sin(gamma), 0, cos(gamma) ];
-Rz = [ cos(q1), -sin(q1), 0; 
-       sin(q1),  sin(q1), 0;
-             0,        0, 1 ];
-ex = Rz*Ry*eX;
-ey = Rz*Ry*eY;
-ez = Rz*Ry*eZ;
+ex = Ry*eX;
+ey = Ry*eY;
+ez = Ry*eZ;
 
 % Kinetic Energy -----
-
-% Translational velocity of collar
-rC = q3.*ex;
-vG = diff( rC, q1 )*dq1 + diff( rC, q2 )*dq2 + diff( rC, q3 )*dq3;
-T1 = (1./2).*m2.*vG.'*vG;
 
 % Rotational velocity of rod
 Izz = (1./12).*m1.*L.^(2);
 Iyy = (1./12).*m1.*L.^(2);
 HG = -Iyy.*dq2.*ey + Izz.*dq1.*ez;
-omega = -dq2.*ey + dq2.*ez;
+omega = -dq2.*ey + dq1.*eZ;
 T2 = (1./2).*omega.'*HG;
+
+% Translational velocity of collar
+rC = q3.*ex;
+vC = dq3.'*ex + cross( omega, rC );
+T1 = (1./2).*m2.*vC.'*vC;
 
 % Total KE
 T = T1 + T2;

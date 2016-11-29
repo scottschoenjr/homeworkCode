@@ -33,11 +33,6 @@ ez = Ry*eZ;
 
 % Kinetic Energy -----
 
-% Translational velocity
-rG = (q3 - L/2).*ex;
-vG = diff( rG, q1 )*dq1 + diff( rG, q2 )*dq2 + diff( rG, q3 )*dq3;
-T1 = (1./2).*m.*vG.'*vG;
-
 % Rotational velocity
 Izz = (1./3).*m.*L.^(2);
 Iyy = (1./3).*m.*L.^(2);
@@ -46,6 +41,11 @@ omega_z = omega.'*ez;
 omega_y = omega.'*ey;
 HG = -Iyy.*omega_y.*ey + Izz.*omega_z.*ez;
 T2 = (1./2).*omega.'*HG;
+
+% Translational velocity
+rG = (q3 - L/2).*ex;
+vG = dq3.*ex + (q3 - L./2).*cross( omega, ex );
+T1 = (1./2).*m.*vG.'*vG;
 
 % Total KE
 T = T1 + T2;

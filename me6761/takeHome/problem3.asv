@@ -13,7 +13,7 @@ close all
 clc
 
 % Channel parameters
-H = 300; % Depth [m]
+H = 30; % Depth [m]
 c = 1500; % Sound speed [m/s] 
 tStart = 0; % [s]
 tEnd = 20; % [s]
@@ -22,18 +22,25 @@ Fs = 20E3; % [Hz]
 % Source and receiver
 xSrc = 0; % [m]
 ySrc = 8; % [m]
-xRec = 1E3; % [m]
-yRec = 250; % [m]
+xRec = 20E3; % [m]
+yRec = 29; % [m]
 
 % Pulse paramters
 fc = 100; % Center frequency [Hz]
 tau = 0.0125; % Width parameter [s]
 t0 = 35E-3; % Delay [s]
 
+% %%%%%% DEBUG %%%%%%%
+% fc = 1E3; % Center frequency [Hz]
+% tau = 2E-3; % Width parameter [s]
+% t0 = 35E-3; % Delay [s]
+% %%%%%%%%%%%%%%%%%%%%%
+
 % Reconstruction parameters (Used to save time)
 fMin = 0; % [Hz]
 fMax = 20E3; % [Hz]
-evanescentModesToKeep = 3;
+nModes = 50;
+evanescentModesToKeep = 20;
 
 % Compute parameters
 dt = 1./Fs; % Time step [s]
@@ -53,16 +60,17 @@ sTilde = fft(s);
 sRecTilde = 0.*sTilde;
 
 % Get the contribution at each frequency
+tic
 for fCount = 1:length(fVector)
     
    % Compute calculations only within bandwidth to save time
    % NOTE - This assumes fVector increases monotonically!
    f = fVector( fCount );
-%    if f < fMin
-%        continue;
-%    elseif f > fMax
-%        continue; % Break not allowed in parfor
-%    end
+   if f < fMin
+       continue;
+   elseif f > fMax
+       continue; % Break not allowed in parfor
+   end
    
    % Initialize Green's function at this frequency
    Gtilde = 0;
@@ -73,12 +81,17 @@ for fCount = 1:length(fVector)
    k = omega./c;
    evanescentModesKept = 0;
    
-   for modeCount = 1:20
+   for modeCount = 1:nModes
        
        % Get propagating mode number
        n = modeCount;
        ky = (n - 0.5).*pi./H;
        kx = sqrt( k.^(2) - ky.^(2) );
+       
+       % If kx == 0, add tiny amount so we don't blow up
+       if kx == 0
+           kx = 1E-16;
+       end
 
        % Keep evanescent modes only if we're below the number we want to
        % keep.
@@ -92,8 +105,8 @@ for fCount = 1:length(fVector)
        % Add in contribution
        psi  = sin( ky.*yRec );
        psi0 = sin( ky.*ySrc );
-       denominator = k.^(2) - kx.^(2);
-       Gtilde = Gtilde - (4.*pi./H).*( ...
+       denominator = sqrt( kx.*r );
+       Gtilde = Gtilde + (4.*pi./H).*( ...
            psi.*psi0./denominator ...
            ).*exp( 1j.*kx.*r );
        
@@ -103,6 +116,7 @@ for fCount = 1:length(fVector)
    sRecTilde(fCount) = sTilde(fCount).*Gtilde;
     
 end
+toc
 
 % Get the received signal in the time domain
 sRec = fliplr( ifft( sRecTilde ) );

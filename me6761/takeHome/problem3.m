@@ -16,31 +16,31 @@ clc
 H = 30; % Depth [m]
 c = 1500; % Sound speed [m/s] 
 tStart = 0; % [s]
-tEnd = 20; % [s]
-Fs = 20E3; % [Hz]
+tEnd = 30; % [s]
 
 % Source and receiver
 xSrc = 0; % [m]
 ySrc = 8; % [m]
 xRec = 20E3; % [m]
-yRec = 29; % [m]
+yRec = 21; % [m]
 
 % Pulse paramters
 fc = 100; % Center frequency [Hz]
 tau = 0.0125; % Width parameter [s]
 t0 = 35E-3; % Delay [s]
 
-%%%%%%% DEBUG %%%%%%%
-fc = 1E3; % Center frequency [Hz]
-tau = 2E-3; % Width parameter [s]
-t0 = 35E-3; % Delay [s]
-%%%%%%%%%%%%%%%%%%%%%%
+% %%%%%% DEBUG %%%%%%%
+% fc = 1E3; % Center frequency [Hz]
+% tau = 2E-3; % Width parameter [s]
+% t0 = 35E-3; % Delay [s]
+% %%%%%%%%%%%%%%%%%%%%%
 
 % Reconstruction parameters (Used to save time)
+Fs = 99.*fc; % [Hz]
 fMin = 0; % [Hz]
-fMax = 20E3; % [Hz]
-nModes = 50;
-evanescentModesToKeep = 20;
+fMax = Fs; % [Hz]
+nModes = 20;
+evanescentModesToKeep = 2;
 
 % Compute parameters
 dt = 1./Fs; % Time step [s]
@@ -87,6 +87,11 @@ for fCount = 1:length(fVector)
        n = modeCount;
        ky = (n - 0.5).*pi./H;
        kx = sqrt( k.^(2) - ky.^(2) );
+       
+       % If kx == 0, add tiny amount so we don't blow up
+       if kx == 0
+           continue;
+       end
 
        % Keep evanescent modes only if we're below the number we want to
        % keep.
@@ -100,8 +105,8 @@ for fCount = 1:length(fVector)
        % Add in contribution
        psi  = sin( ky.*yRec );
        psi0 = sin( ky.*ySrc );
-       denominator = k.^(2) - kx.^(2);
-       Gtilde = Gtilde - (4.*pi./H).*( ...
+       denominator = sqrt( kx.*r );
+       Gtilde = Gtilde + sqrt(2./H).*( ...
            psi.*psi0./denominator ...
            ).*exp( 1j.*kx.*r );
        
