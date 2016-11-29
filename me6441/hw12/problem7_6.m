@@ -25,14 +25,14 @@ eZ = [ 0; 0; 1 ];
 % Of gimbal
 HG = I1.*dq1.*eX;
 omega = dq1.*eX;
-T1 = (1./2).*omega.*HG;
+T1 = (1./2).*omega'*HG;
 
 % Of arm
 IXX = 2.*m.*L.^(2).*(sin(q2)).^(2);
 IZZ = 2.*m.*L.^(2);
 HG = IXX.*dq1.*eX + IZZ.*dq2.*eZ;
 omega = dq1.*eX + dq2.*eZ;
-T2 = (1./2).*omega.*HG;
+T2 = (1./2).*omega'*HG;
 
 % Total KE
 T = T1 + T2;

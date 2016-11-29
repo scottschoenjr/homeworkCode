@@ -29,8 +29,10 @@ T1 = ( IA.*dq1.^(2) )./2;
 L2 = 3.*L/2; 
 m2 = 3/2.*m1;
 IG = (m2.*L2^2)/12; % About center of mass
+% Compute velocity
 rGA = (5./4)*L*cos(q1).*eX +  (3/4).*L.*sin(q1).*eY;
 vG = diff(rGA, q1).*dq1; % Velocity of center of mass
+% Add rotational component
 T2 = (1./2).*m2*vG.'*vG + (1./2).*IG.*dq1.^(2);
 
 % Total KE
@@ -39,7 +41,7 @@ T = T1 + T2;
 % Potential Energy -----
 
 % Gravitational
-Vg = m1.*g.*(L./2).*sin(q1) + m2.*g.*(3.*L/4).*sin(q1);
+Vg = m1.*g.*(L./2).*sin(q1) + m2.*g.*(3.*L./4).*sin(q1);
 
 % Spring
 deltaX = 2.*L.*cos(q1) - 2*L*cos(pi./4);
@@ -56,11 +58,9 @@ Q1 = Pvec.'*delta_rD; % Generalized force
 
 % Get equation of motion with fulldiff
 eom = fulldiff( diff(T, dq1), {q1}) ...
-    - diff(T,q1) + diff(V, q1) - Q1
+    - diff(T,q1) + diff(V, q1) - Q1;
 
-% EOM can be written:
-%
-%  d2q1*(sL*L^2)*(35/24  + (3/2)*sin(q1)^2) 
-%      + (3/2*(sL*L^2)*sin(q1)*cos(q1)*dq1^2
-%      + 2*k*(L^2)*(sqrt(2) - 2*cos(q1))*sin(q1)
-%      + (13/8)*sL*L*g*cos(q1) = -(3/2)*P*L*cos(q1)
+% Simplify and get LaTeX version for energies and eom
+eomSimp = simplify( eom );
+latex( eomSimp )
+
