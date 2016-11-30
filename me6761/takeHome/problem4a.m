@@ -1,10 +1,10 @@
 %**************************************************************************
 %
-% ME-6761 Final Project, Problem 3
+% ME-6761 Final Project, Problem 4
 %
 %   Propagaition of pulse in 2D waveguide
 %
-%     Scott Schoen Jr 20161116
+%     Scott Schoen Jr 20161129
 %
 %**************************************************************************
 
@@ -13,36 +13,36 @@ close all
 clc
 
 % Channel parameters
-H = 30; % Depth [m]
-c = 1500; % Sound speed [m/s]
+H = 30;     % Depth [m]
+c = 1500;   % Sound speed [m/s]
 tStart = 0; % [s]
-tEnd = 25; % [s]
-Fs = 20E3; % [Hz]
+tEnd = 50;  % [s]
 
 % Source position
 xSrc = 0; % [m]
 ySrc = 8; % [m]
 
 % Receiver positions
-dx = 2500;
+dx = 100;
 xRecVector = 20E3 : dx : 30E3;
 numReceivers = length( xRecVector );
 yRecVector = 21.*ones( 1, numReceivers );
 
 % Pulse paramters
-fc = 100; % Center frequency [Hz]
+fc = 200; % Center frequency [Hz]
 tau = 0.0125; % Width parameter [s]
 t0 = 35E-3; % Delay [s]
 
 % Reconstruction parameters (Used to save time)
 fMin = 0; % [Hz]
 fMax = 20E3; % [Hz]
-nModes = 10;
-evanescentModesToKeep = 2;
+nModes = 4;
+evanescentModesToKeep = 0;
 
 % Compute parameters
-dt = 1./Fs; % Time step [s]
-tVector = tStart : dt : tEnd; % Time vector [s]
+Fs = 3.*pi.*fc; % Sampling rate [Hz]
+dt = 1./Fs;      % Time step [s]
+tVector = tStart : dt : tEnd;                 % Time vector [s]
 fVector = linspace( 0, Fs, length(tVector) ); % Frequency vector [Hz]
 omegac = 2.*pi.*fc; % Angular frequency [rad/s]
 
@@ -67,9 +67,9 @@ for recCount = 1:numReceivers
     yRec = yRecVector( recCount );
     rCurs = sqrt( (xSrc - xRec).^(2) + (ySrc - yRec).^(2) );
     r = abs(xSrc - xRec); % Horizontal range to receiver [m]
-    
+      
     % Get the contribution at each frequency
-    parfor fCount = 1:length(fVector)
+    for fCount = 1:length(fVector)
         
         % Compute calculations only within bandwidth to save time
         % NOTE - This assumes fVector increases monotonically!
@@ -77,7 +77,7 @@ for recCount = 1:numReceivers
         if f < fMin
             continue;
         elseif f > fMax
-            continue; % Break not allowed in parfor
+           continue;
         end
         
         % Initialize Green's function at this frequency
@@ -105,13 +105,14 @@ for recCount = 1:numReceivers
                 end
             end
             
-            % Add in contribution
+            % Compute mode shapes for this frequency and position
             psi  = sin( ky.*yRec );
             psi0 = sin( ky.*ySrc );
-            denominator = k.^(2) - kx.^(2);
-            Gtilde = Gtilde - (4.*pi./H).*( ...
+            denominator = kx;
+            modeContribution = (4./(1j.*H)).*( ...
                 psi.*psi0./denominator ...
                 ).*exp( 1j.*kx.*r );
+            Gtilde = Gtilde + modeContribution;
             
         end
         
@@ -130,7 +131,9 @@ toc
 sNorm = s./max(abs(s));
 sRecNorm = sRec./max(max(abs(real(sRec))));
 
-%% Format plot
+%% Format plots
+
+% Plot of all receivers' signals
 figure()
 hold all;
 box on;
@@ -139,26 +142,23 @@ box on;
 [xPlot, tPlot] = meshgrid( xRecVector, tVector );
 
 % Get large variables out of memory
-clear tVector s sTilde sNorm sRecTilde fVector
+clear s sTilde sNorm sRecTilde fVector
 
 % Plot received signal
-waterfall( xPlot'./1E3, tPlot', real(sRecNorm) );
-xlabel('Recever Position [km]');
-ylabel( 'Time [s]' );
-zlabel( 'Normalized Signal' );
+rangePlot = pcolor( tPlot', xPlot'./1E3, abs(hilbert(real(sRecNorm))) );
+xlabel( 'Time [s]' );
+ylabel('Recever Position [km]');
 
-xlim( [12, 20] );
+xlim( [12, 22] );
+ylim( [20, 30] );
 
-% % Plot each received signal
-% scale = 0.2;
-% for plotCount = 1:recCount
-%     offset = 4.*scale.*plotCount;
-%     plot( tVector, scale.*real( sRecNorm(plotCount, :)) - offset, 'k' );
-% end
-% 
-% xlabel('$t$ [s]');
-% ylabel('$s(t)$');
-% 
-% ylim( [-2, 5] );
-% xlim( [0, 20] );
+blackAndWhite = flipud( colormap( gray ) );
+colormap( blackAndWhite );
+set(rangePlot, 'EdgeColor', 'none' );
+
+box on;
+zoom xon;
+
+
+
 
