@@ -30,7 +30,7 @@ L2 = 3.*L/2;
 m2 = 3/2.*m1;
 IG = (m2.*L2^2)/12; % About center of mass
 % Compute velocity
-rGA = (5./4)*L*cos(q1).*eX +  (3/4).*L.*sin(q1).*eY;
+rGA = -(5./4)*L*cos(q1).*eX +  (3/4).*L.*sin(q1).*eY;
 vG = diff(rGA, q1).*dq1; % Velocity of center of mass
 % Add rotational component
 T2 = (1./2).*m2*vG.'*vG + (1./2).*IG.*dq1.^(2);
@@ -62,5 +62,5 @@ eom = fulldiff( diff(T, dq1), {q1}) ...
 
 % Simplify and get LaTeX version for energies and eom
 eomSimp = simplify( eom );
-latex( eomSimp )
+pretty( eomSimp )
 

@@ -1,8 +1,8 @@
 %**************************************************************************
 %
-% ME-6761 Final Project, Problem 3
+% ME-6761 Final Project, Problem 4b
 %
-%   Propagaition of pulse in 2D waveguide
+%   Propagation of pulse in 2D waveguide -- Individual Modes
 %
 %     Scott Schoen Jr 20161130
 %

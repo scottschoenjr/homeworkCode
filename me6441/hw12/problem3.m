@@ -17,7 +17,7 @@ clc
 % Define symbolic values
 syms q1 dq1 q2 dq2 q3 dq3 L m F g
 
-% Define inertial unit vectors
+% Define unit vectors attached to fork
 eX = [ 1; 0; 0 ];
 eY = [ 0; 1; 0 ];
 eZ = [ 0; 0; 1 ];
@@ -56,8 +56,11 @@ V = m*g*( rG.'*eZ );
 
 % Get equations of motion with fulldiff
 eomPsi = fulldiff( diff(T, dq1), {q1, q2, q3}) ...
-    - diff(T, q1) + diff(V, q1)
+    - diff(T, q1) + diff(V, q1);
+pretty( simplify( eomPsi ) )
 eomTheta = fulldiff( diff(T, dq2), {q1, q2, q3}) ...
-    - diff(T, q2) + diff(V, q2)
-eomXi = fulldiff( diff(T, dq1), {q1, q2, q3}) ...
-    - diff(T, q2) + diff(V, q2)
+    - diff(T, q2) + diff(V, q2);
+pretty( simplify( eomTheta ) )
+eomXi = fulldiff( diff(T, dq3), {q1, q2, q3}) ...
+    - diff(T, q3) + diff(V, q3);
+pretty( simplify( eomXi ) )

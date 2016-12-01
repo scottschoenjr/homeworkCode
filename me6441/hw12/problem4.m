@@ -15,7 +15,7 @@ clc
 % -------------------------
 
 % Define symbolic values
-syms q1 dq1 q2 dq2 q3 dq3 L m1 m2 F M g
+syms q1 dq1 q2 dq2 q3 dq3 L m1 m2 F M g k
 
 % Define inertial unit vectors
 eX = [ 1; 0; 0 ];
@@ -48,14 +48,16 @@ T1 = (1./2).*m2.*vC.'*vC;
 % Total KE
 T = T1 + T2;
 simplify(T)
-% 
-% % Potential Energy -----
-% V = m*g*( rG.'*eZ );
-% 
-% % Get equations of motion with fulldiff
-% eomPsi = fulldiff( diff(T, dq1), {q1, q2, q3}) ...
-%     - diff(T, q1) + diff(V, q1)
-% eomTheta = fulldiff( diff(T, dq2), {q1, q2, q3}) ...
-%     - diff(T, q2) + diff(V, q2)
-% eomXi = fulldiff( diff(T, dq1), {q1, q2, q3}) ...
-%     - diff(T, q2) + diff(V, q2)
+
+% Potential Energy -----
+V_AB = -m1*g*( (L./2).*sin(q2) ); % Rod (just gravitational)
+V_C = -m2*g*( q3.*sin(q2) ) + (1./2).*k.*(q3 - (L./2)); % Collar
+V = V_AB + V_C;
+
+% Get equations of motion with fulldiff
+eomTheta = fulldiff( diff(T, dq2), {q2, q3}) ...
+    - diff(T, q2) + diff(V, q2);
+pretty( simplify( eomTheta ) )
+eomQ = fulldiff( diff(T, dq3), {q2, q3}) ...
+    - diff(T, q3) + diff(V, q3);
+pretty( simplify( eomQ ) )
