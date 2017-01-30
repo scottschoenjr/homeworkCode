@@ -8,11 +8,28 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib as mpl
+from matplotlib.patches import FancyArrowPatch
+from mpl_toolkits.mplot3d import proj3d
+
+# For drawing vector on 3D plot
+class Arrow3D(FancyArrowPatch):
+    def __init__(self, xs, ys, zs, *args, **kwargs):
+        FancyArrowPatch.__init__(self, (0,0), (0,0), *args, **kwargs)
+        self._verts3d = xs, ys, zs
+    #
+
+    def draw(self, renderer):
+        xs3d, ys3d, zs3d = self._verts3d
+        xs, ys, zs = proj3d.proj_transform(xs3d, ys3d, zs3d, renderer.M)
+        self.set_positions((xs[0],ys[0]),(xs[1],ys[1]))
+        FancyArrowPatch.draw(self, renderer)
+    #
+#
 
 # Create spatial variables
 nPoints = 1000;
-x_1d = np.linspace(-5, 5, nPoints);
-y_1d = np.linspace(-3, 3, nPoints);
+x_1d = np.linspace(0.2, 2.9, nPoints);
+y_1d = np.linspace(0, 5, nPoints);
 x, y = np.meshgrid(x_1d, y_1d);
 
 # Create scalar field
@@ -36,24 +53,34 @@ maxValue = 2;
 
 surfacePlotHandle = ax.plot_surface(x, y, z, \
     cmap='viridis', linewidth=0, antialiased=False );
-
     
-# contourPlotHandle = \
-#    plt.contour(x, y, z, levels, colors='k');
-    
-    
-ax.set_zlim(0, 2);
+# Add in gradient vector
+x0 = np.pi/6;
+y0 = 3/2;
+z0 = 1;
+x1 = x0 + np.sqrt(3);
+y1 = y0 + 2;
+z1 = z0;
+a = Arrow3D([x0, x1], [y0, y1], [z0, z1], mutation_scale=20, 
+                lw=3, arrowstyle="-|>", color="k")
+ax.add_artist(a)
 
-# fig.colorbar(surfacePlotHandle);
-v = np.linspace( 0, 2, 32);
-x = plt.colorbar(surfacePlotHandle, ticks=v)
+ax.text( x1 - 1.5, y1-1, z1, r'$\nabla f$', None, fontsize=20 );
 
-plt.ylim([-0.05, 2.05]);
-plt.ylabel(r'$y$',fontsize=22, family='serif');
-plt.yticks( fontsize=16, family='serif' );
+# Plot level curve in x-y plane
+xLong = np.linspace(0, 3.5, 1000);
+linePlotHandle = ax.plot( xLong, np.sin(xLong) + 1, 'k' );
+
+plt.ylim([0, 5]);
+plt.ylabel(r'$y$',fontsize=26, family='serif',labelpad=20);
+plt.yticks( fontsize=14, family='serif' );
 
 plt.xlim([0, np.pi]);
-plt.xlabel(r'$x$',fontsize=22, family='serif');
-plt.xticks( fontsize=16, family='serif' );
+plt.xlabel(r'$x$',fontsize=26, family='serif',labelpad=20);
+plt.xticks( [0, np.pi/4, np.pi/2, 3*np.pi/4, np.pi], \
+    [r'0', r'$\pi/4$', r'$\pi/2$', r'$3\pi/4$', '$\pi$'], \
+    fontsize=19, family='serif' );
+
+ax.set_zlabel(r'$z$',fontsize=26, family='serif',labelpad=20);
 
 plt.show()
