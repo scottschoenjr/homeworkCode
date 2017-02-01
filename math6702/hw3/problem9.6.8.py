@@ -34,8 +34,6 @@ x, y = np.meshgrid(x_1d, y_1d);
 
 # Create scalar field
 z = (y - 1)/np.sin(x);
-# z[ z > 2 ] = np.NAN;
-# z[ z < 0 ] = np.NAN;
 
 # Compute level curve value
 x0 = np.pi/6;
