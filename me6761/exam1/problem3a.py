@@ -16,8 +16,8 @@ x, z_a = np.meshgrid(x_1d, z_1d_above);
 x, z_b = np.meshgrid(x_1d, z_1d_below);
 
 # Set material parameters
-f = 5000; # Frequency [Hz]
-c0 = 343; # Sound speed in fluid [m/s]
+f = 2000; # Frequency [Hz]
+c0 = 100; # Sound speed in fluid [m/s]
 rho0 = 1.225; # Density of fluid [kg/m^3]
 L = 3E-3; # Plate thickness [m]
 U0 = 1E-3; # Oscillation amplitude [m]
@@ -41,7 +41,7 @@ cpl = ( ((omega**2)*beta)/(rho2*L) )**(0.25);
 # Define shorthands
 gamma = ( 1 - c0**2/cpl**2  )**0.5;
 A = -1j*omega*rho0*c0*U0;
-phi_a = 1j*omega*( x/cpl + z_a*gamma/c0 );
+phi_a = 1j*omega*( x/cpl + z_a*gamma/c0 );2
 phi_b = 1j*omega*( x/cpl - z_b*gamma/c0 );
 
 # Find pressure fields
@@ -73,32 +73,41 @@ vx_b_Norm = normFactor*vx_b;
 vz_a_Norm = normFactor*vz_a;
 vz_b_Norm = normFactor*vz_b;
 
+# Plotting options
+step = round( nPoints/72 );
+scaleFactor = 500;
+width = 0.2;
+
 # Plot pressure
 colorPlotHandle1 = plt.pcolormesh(x, z_a, np.real(p_a_Norm), \
-    cmap='viridis',linewidth=0);
+    cmap='binary',linewidth=0);
 colorPlotHandle2 = plt.pcolormesh(x, z_b, np.real(p_b_Norm), \
-    cmap='viridis',linewidth=0);
+    cmap='binary',linewidth=0);
 colorPlotHandle1.set_edgecolor('face')
 colorPlotHandle2.set_edgecolor('face')
 
+plt.ylabel(r'$z$ [m]',fontsize=22, family='serif');
+plt.xlabel(r'$x$ [m]',fontsize=22, family='serif');
+
+plt.xticks( fontsize=14, family='serif' );
+plt.yticks( fontsize=14, family='serif' );
+
+plt.xlim([0, 2*width]);
+
 plt.clim(-1,1);
-cbar = plt.colorbar();
-cbar.set_label(r'Normalized Pressure', fontsize=15, family='serif');
+cbar = plt.colorbar(colorPlotHandle1, ticks=[-1, -0.5, 0, 0.5, 1]);
+cbar.set_label(r'Normalized Pressure', fontsize=16, family='serif');
 
-plt.ylabel(r'$z$ [m]',fontsize=18, family='serif');
-plt.xlabel(r'$x - x_{0}$ [m]',fontsize=18, family='serif');
-
-plt.xticks( fontsize=12, family='serif' );
-plt.yticks( fontsize=12, family='serif' );
+cbar.ax.yaxis.set_ticklabels( \
+    [-1, -0.5, 0, 0.5, 1], \
+    family='serif', fontsize=14);
 
 plt.show();
 
+plt.savefig('cbar.png', dpi = 600)
+
 # Plot velocity
 plt.figure()
-
-step = round( nPoints/50 );
-scaleFactor = 380;
-width = 0.2;
 
 quiverPlotHandle1 = \
     plt.quiver(x[::step,::step], z_a[::step,::step], \
@@ -110,11 +119,11 @@ quiverPlotHandle2 = \
     angles='xy', scale=scaleFactor);
 
 plt.ylim([-width, width]);
-plt.ylabel(r'$z$ [m]',fontsize=18, family='serif');
+plt.ylabel(r'$z$ [m]',fontsize=22, family='serif');
 plt.yticks( fontsize=12, family='serif' );
 
 plt.xlim([0, 2*width]);
-plt.xlabel(r'$x - x_{0}$ [m]',fontsize=18, family='serif');
+plt.xlabel(r'$x$ [m]',fontsize=22, family='serif');
 plt.xticks( fontsize=12, family='serif' );
 
 plt.show()
